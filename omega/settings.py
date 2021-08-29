@@ -27,7 +27,9 @@ SECRET_KEY = 'django-insecure-sieo#e+%ji%4%)yct)1%5_jvzbn0t@1(a^tbasal=)$o9p*6yy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "https://random-chat-web-app.herokuapp.com"
+]
 
 
 # Application definition
