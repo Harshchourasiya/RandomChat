@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous" />
+    {% load static %}
+    <link rel="shortcut icon" href="{% static 'whatsapp.png' %}" type="image/x-icon"> 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet">
+  <title>Chat</title>
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Roboto Condensed', sans-serif;
+    }
+
+    .bottom {
+      position: absolute;
+      bottom: 0;
+      margin: 0px 10px 10px 10px;
+      padding: 0px 10px 0px 10px;
+      width: 90%;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 80px 0 rgb(0 0 0 / 19%);
+    }
+
+    textarea {
+      resize: none;
+      height: 10px;
+      margin: auto;
+      background-color: white;
+    }
+
+    #big_container {
+      display: none;
+      height: 100%;
+      width: 100%;
+      justify-content: center;
+      padding-left: 30px;
+      padding-right: 30px;
+      padding-top: 10px;
+      background-color: whitesmoke;
+    }
+
+    #container {
+      display: flex;
+      flex-direction: column;
+      height: 90%;
+      width: 100%;
+      overflow: scroll;
+      padding: 10px;
+    }
+
+    #container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .send_message {
+      display: inline;
+      float: right;
+      padding: 5px 10px 5px 10px;
+      margin-top: 20px;
+      border: 1px solid lightgreen;
+      background-color: #90EE90;
+      box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 80px 0 rgb(0 0 0 / 19%);
+      color: black;
+      border-radius: 10px 0px 10px 10px;
+      min-width: 2%;
+      max-width: 50%;
+      text-align: right;
+    }
+
+    .receive_message {
+      display: inline;
+      float: left;
+      padding: 5px 10px 5px 10px;
+      margin-top: 20px;
+      border: 1px solid lightgray;
+      box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 80px 0 rgb(0 0 0 / 19%);
+      background-color: white;
+      color: black;
+      border-radius: 0px 10px 10px 10px;
+      min-width: 2%;
+      max-width: 50%;
+      text-align: left;
+    }
+
+    #wait {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #connect_message {
+      display: none;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    #disconnect_message {
+      display: none;
+      justify-content: center;
+      margin-top: 10px;
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="connect_message">
+    <div class="alert alert-success" role="alert">
+      Person is online You can start Chat...
+    </div>
+  </div>
+
+  <div id="disconnect_message">
+    <div class="alert alert-danger" role="alert">
+      Person is Offline, Finding another...
+    </div>
+  </div>
+
+
+  <div id="big_container">
+
+    <div id="container"></div>
+    <div class="d-flex justify-content-evenly bottom">
+      <textarea class="form-control" id="chat-message-input" placeholder="Enter Message..."></textarea>
+      <button type="button" id="chat-message-submit" class="btn btn-success"
+        style="margin: 10px; background-color: #90EE90; color: black;">
+        Send
+      </button>
+    </div>
+  </div>
+
+  <div id="wait">
+    <img src="https://c.tenor.com/B5ehOFvZSFAAAAAC/searching.gif" width="30%" height="30%">
+    <h4>Searching Person...</h4>
+  </div>
+
+  {% load static %}
+  <audio id="sendSound" src="{% static 'sendSound.mp3' %}" />
+  <audio id="receiveSound" src="{% static 'receiveSound.mp3' %}" />
+
+  {{ room_name|json_script:"room-name" }}
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"
+    integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
+
+  <script>
+    const room_name = JSON.parse(
+      document.getElementById("room-name").textContent
+    );
+    const sendSound = document.getElementById("sendSound");
+    const receiveSound = document.getElementById("receiveSound");
+    const messageInputDom = document.querySelector("#chat-message-input");
+    let send_message = "";
+    let decrypted_message = "";
+    const url =
+      "ws://" + window.location.host + "/ws/chat/" + room_name + "/";
+    const chatSocket = new WebSocket(url);
+
+    chatSocket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+      if (!data.connect) {
+
+        if (data.message === send_message) {
+          const message =
+            '<div><p class="send_message">' + decrypted_message + "</p></div>";
+
+          document.querySelector("#container").innerHTML += message;
+
+        } else {
+
+          receiveSound.play();
+          let decrypted = CryptoJS.AES.decrypt(data.message, room_name);
+
+          const message =
+            '<div><p class="receive_message">' + decrypted.toString(CryptoJS.enc.Utf8) + "</p></div>";
+
+          document.querySelector("#container").innerHTML += message;
+
+        }
+
+      } else {
+        if (data.connect === "False") {
+          document.getElementById("connect_message").style.display = 'flex';
+          setTimeout(disable_connect_message, 3000);
+          document.getElementById("big_container").style.display = "flex";
+          document.getElementById("wait").style.display = "none";
+        } else {
+          if (data.disconnect == "Yes") {
+            document.getElementById("disconnect_message").style.display = 'flex';
+            setTimeout(disable_disconnect_message, 3000);
+          }
+        }
+      }
+    };
+
+    const disable_connect_message = () => {
+      document.getElementById("connect_message").style.display = 'none';
+    }
+    const disable_disconnect_message = () => {
+      window.location = window.location.origin + "/chat/search/lobby/";
+    }
+
+    chatSocket.onclose = function (e) {
+      console.error("Chat socket closed unexpectedly");
+    };
+
+    messageInputDom.focus();
+    messageInputDom.onkeyup = function (e) {
+      if (e.keyCode === 13) {
+        document.querySelector("#chat-message-submit").click();
+      }
+    };
+
+    document.querySelector("#chat-message-submit").onclick = function (e) {
+      sendSound.play();
+      decrypted_message = messageInputDom.value;
+      send_message = CryptoJS.AES.encrypt(messageInputDom.value, room_name).toString();
+      chatSocket.send(send_message);
+      messageInputDom.value = "";
+    };
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    {% load static %}
+    <link rel="shortcut icon" href="{% static 'whatsapp.png' %}" type="image/x-icon">  
+    <title>Home</title>
+
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Roboto Condensed', sans-serif;
+            background-color: whitesmoke;
+        }
+
+        #nav {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 20px;
+            align-items: center;
+        }
+
+        #nav ul {
+            list-style: none;
+            float: right;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        #nav h4 {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        #nav ul li {
+            display: inline-block;
+            list-style-type: none;
+        }
+
+        #nav ul li a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 10px 10px 10px;
+            background-color: #90EE90;
+            border-radius: 10px;
+            margin: 10px;
+            transition: all .5s;
+            border: 1px solid white;
+        }
+
+        #nav ul li a:hover {
+            background-color: white;
+            color: #90EE90;
+            border: 1px solid #90EE90;
+
+        }
+
+        #big_container {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            justify-content: center;
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            height: 90%;
+            width: 80%;
+            overflow: scroll;
+            padding: 10px;
+        }
+
+        #container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .send_message {
+            display: inline;
+            float: right;
+            padding: 5px 10px 5px 10px;
+            margin-top: 20px;
+            border: 1px solid lightgreen;
+            background-color: #90EE90;
+            box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 80px 0 rgb(0 0 0 / 19%);
+            color: black;
+            border-radius: 10px 0px 10px 10px;
+            min-width: 2%;
+            max-width: 50%;
+            text-align: right;
+        }
+
+        .receive_message {
+            display: inline;
+            float: left;
+            padding: 5px 10px 5px 10px;
+            margin-top: 20px;
+            border: 1px solid lightgray;
+            box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 80px 0 rgb(0 0 0 / 19%);
+            background-color: white;
+            color: black;
+            border-radius: 0px 10px 10px 10px;
+            min-width: 2%;
+            max-width: 50%;
+            text-align: left;
+        }
+
+        #last {
+            position: absolute;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        #last a {
+            text-decoration: none;
+            color: white;
+            background-color: #90EE90;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 80px 0 rgb(0 0 0 / 19%);
+            transition: all .5s;
+            border: 1px solid white;
+        }
+
+        #last a:hover {
+            background-color: white;
+            color: #90EE90;
+            border: 1px solid #90EE90;
+        }
+
+        #last p {
+            font-size: 15px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="nav">
+        <h4>Random Chat</h4>
+
+        <ul>
+            <li><a href="https://github.com/Harshchourasiya/RandomChat">Git</a></li>
+            <li><a href="https://github.com/Harshchourasiya/RandomChat/issues">Issue</a></li>
+        </ul>
+    </div>
+
+    <div id="big_container">
+
+        <div id="container">
+
+            <div>
+                <p class="send_message">
+                    How Are You?
+                </p>
+            </div>
+            <div>
+                <p class="receive_message">
+                    I'm Fine and You?
+                </p>
+            </div>
+            <div>
+                <p class="send_message">
+                    I'm Amazing, So where are you from?
+                </p>
+            </div>
+            <div>
+                <p class="receive_message">
+                    I'm from India and You?
+                </p>
+            </div>
+            <div>
+                <p class="send_message">
+                    I'm from USA
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="last">
+        <a href="/chat/search/lobby">Start Chat</a>
+        <p>All Chat are End to End Encrypted</p>
+    </div>
+
+
+
+
+
+
+</body>
+
+</html>
