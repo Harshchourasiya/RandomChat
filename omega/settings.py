@@ -25,11 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-sieo#e+%ji%4%)yct)1%5_jvzbn0t@1(a^tbasal=)$o9p*6yy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [
-    "https://random-chat-web-app.herokuapp.com"
-]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'random-chat-web-app.herokuapp.com']
 
 
 # Application definition
